@@ -1,0 +1,142 @@
+---
+title: "Merging Kobo Data with mergekobodata"
+author: "Martin Barner"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## What problem does this package solve?
+
+Sometimes, small changes are made to a Kobo questionnaire during data collection, leaving us with multiple data files that can be tedious to combine into one. (For example Adding/removing questions or select_multiple choices can change the number and order of columns).
+
+This package let's you combine .csv files vertically (like 'copy & pasting' the records in the different data sets _below_ each other, while making sure all columns with the same name are on top of each other, no matter if some columns may be missing). It matches columns with the same names, and fills columns with `NA` for files in which the column doesn't exist.
+
+> If you are familiar with R: This is a simple wrapper for the `rbind.fill` function from the `dplyr` package.
+
+## When not to use this package
+Technically, this package let's you combine any csv files with each other. However this is often a bad idea:
+
+- Avoid merging datasets with different base units, different sampling strategies or vastly different questions.
+- Avoid merging datasets with column names that match between two files but contain different data.
+- If a question was changed significantly between two versions of the same kobo tool, they should not be added in the same column. You can avoid this by changing the variable names.
+
+## Quickstart
+
+Merging Kobo data from varying tools with this package consists of three steps:
+
+1. If you haven't done so already, install the package[^2]:
+    ```{r,eval=FALSE}
+    devtools::install_github('mabafaba/mergekobodata')
+    ```
+   
+    [^2]: you can then open this tutorial any time with `browseVignettes('mergekobodata')`
+
+1. Load the package:
+    ```{r,eval=FALSE}
+    devtools::install_github('mabafaba/mergekobodata')
+    ```
+    
+1. Save all your files in a single folder in csv format
+    - They should all have a single row as the column header
+    - They should have unique column names. The best way to achieve this is to stick to the kobo xml format.
+
+1. Create an empty folder in which you want to store the merged dataset.
+
+1. Call the function called `merge_kobo_data`, providing only the parameters `folder` and `output_file` like this:
+
+    ```{r, eval=FALSE}
+    merge_kobo_data(folder = './mydata', output_file = './mydata/all_data_merged.csv')
+    ```
+
+This merges all csv files in the folder `./mydata` and stores the merged data in a new file `all_data_merged` in the `mydata` folder.
+
+### The `folder` parameter:
+Either the full path to the folder containing the .csv files to be merged, or a relative path from the current working directory. Relative paths start with a dot; for example './mydata'. You can move one folders up with double dots, for example '../../mydatatwofoldersup) You can find out the current working directory by running:
+```{r}
+getwd()
+```
+If you are using RStudio, you can always hit `tab` to autocomplete folders when writing a path.
+
+### The `output_file` parameter:
+The path + name for the output csv file. As `folder`, this can be an absolute or a relative path.
+
+
+### Default Behaviour
+Unless you are using additional parameters (described below in chapter "Advanced Functionality"), this will:
+
+- Use all files in the input `folder`. They must all end with `.csv`. The csv files must be comma separated and use double quotes as string delimiter.
+- write an additional html log file with the output file name plus '_LOG.html' with basic information about how the merge went.
+- be `verbose`; write file names etc. to the console
+- add a new column that references each records source file.
+
+## Advanced Functionality
+
+### Using merged data directly in R
+The function always returns the merged data as a dataframe; if you don't provide a value for the `output_file` parameter, the merged data is not written to a file if you only want to use it in R directly.
+
+```{r, eval=FALSE}
+# read and merge files:
+merged_data<- merge_kobo_data(folder = './mydata')
+# do something with the data:
+str(merged_data)
+```
+
+### Merging files based on a search term
+
+The `filename_pattern` argument lets you search the input `folder` for files that contain a specific keyword only.
+
+**Example 1**: Search the input folder `./mydata/` for csv files and use only those:
+
+```{r, eval=FALSE}
+merge_kobo_data(folder = './mydata',
+                filename_pattern = '.csv'
+                output_file = './mydata/all_data_merged.csv')
+```
+This can be useful since the function can not deal with files with different extensions.
+
+**Example 2**: Search the input folder `./mydata/` for files containing the keyword `to_merge` and use only those:
+
+```{r, eval=FALSE}
+merge_kobo_data(folder = './mydata',
+                filename_pattern = 'to_merge',
+                output_file = './mydata/all_data_merged.csv')
+```
+
+
+### Merging files based on a more complex search term using regular expressions
+
+You can search your input folder with more complex search patterns using regular expressions, if you set the parameter `use_regex` to `TRUE`. Regular expressions are a standard way to formulate 'fuzzy' search terms.[^1]
+For *Example:*
+```{r, eval=FALSE}
+merge_kobo_data(folder = './mydata',
+                filename_pattern = '^[0-9]',
+                output_file = './mydata/all_data_merged.csv',
+                use_regex = TRUE)
+```
+
+
+The regular expression `^[0-9]` will only merge all files in your input folder that start with a number. (In regular expressions, `^` denotes the start of the text; [0-9] is a placeholder for a single digit). You can do much more advanced searches if you [Learn more about regex](https://ryanstutorials.net/regular-expressions-tutorial/), or look up different placeholders in the [R regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf). 
+
+[^1]: They are widely used across programming languages and many R functions; many text editors support it for advanced search/replace, and you can even use it to [search for files on your computer](https://superuser.com/questions/1123180/how-to-search-files-with-specific-pattern-on-os-x) - so it might be worth learning more!
+
+
+
+### Other parameters
+To see all available options run
+```{r}
+?mergekobodata::merge_kobo_data
+```
+
+
