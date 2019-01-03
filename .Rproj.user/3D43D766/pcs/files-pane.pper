@@ -1,0 +1,9 @@
+{
+    "path" : "~/mergekobodata",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
