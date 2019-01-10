@@ -4,7 +4,7 @@ author: "Martin Barner"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Merging Kobo Data with mergekobodata package}
+  %\VignetteIndexEntry{Merging Kobo Data with mergekobodata}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
