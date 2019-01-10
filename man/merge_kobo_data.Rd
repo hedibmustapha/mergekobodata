@@ -5,8 +5,7 @@
 \title{Merging data files from deviating kobo tools}
 \usage{
 merge_kobo_data(folder, filename_pattern = ".", output_file = NULL,
-  write_log = T, use_regex = F, add_file_reference = T,
-  verbose = T)
+  write_log = T, use_regex = F, add_file_reference = T, verbose = T)
 }
 \arguments{
 \item{folder}{the path to the folder containing the files to be merged. The files must be in csv format.}
