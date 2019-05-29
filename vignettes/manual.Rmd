@@ -46,7 +46,7 @@ Merging Kobo data from varying tools with this package consists of three steps:
 
 1. Load the package:
     ```{r,eval=FALSE}
-    devtools::install_github('mabafaba/mergekobodata')
+  library(mergekobodata)
     ```
     
 1. Save all your files in a single folder in csv format
