@@ -46,7 +46,7 @@ merge_kobo_data<-function(folder,filename_pattern='.',output_file=NULL,write_log
   filenames<-find_files(folder,filename_pattern,use_regex)
   if(length(filenames)==0){stop('no files found that match the search pattern')}
   if(!all(grepl('.csv$',filenames))){stop('all files in the input folder that match the filename_pattern must have the extension ".csv"')}
-  if(!all(grepl('.csv$',output_file))){stop('the output file name must have the extension ".csv"')}
+  # if(!all(grepl('.csv$',output_file))){stop('the output file name must have the extension ".csv"')}
 
   # load all datasets from csv
   filepaths<-paste0(folder,'/',filenames)
