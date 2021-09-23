@@ -62,7 +62,7 @@ merge_kobo_data<-function(folder,filename_pattern='.',output_file=NULL,write_log
   combined<-do.call((plyr::rbind.fill),d)
   # save combined dataset
   if(verbose){message(paste0('writing merged file to:\n',output_file))}
-  writexl::write_xlsx(combined,output_file)
+  readr::write_excel_csv(combined,output_file)
 
   if(write_log){
     logfilepath<-paste0(gsub('\\.csv','',output_file),'_LOG.html')
